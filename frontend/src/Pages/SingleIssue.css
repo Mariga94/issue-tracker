@@ -1,0 +1,45 @@
+.issue__page {
+  display: flex;
+  gap: 10px;
+}
+
+.flex-item {
+  flex: 1;
+}
+
+/* .status-select {
+  background: #91a0ff;
+  width: 107px;
+  height: 32px;
+  border: none;
+} */
+
+.status-select option {
+  background-color: #fff;
+}
+
+.issue__page-left {
+  /* border-right: 1px solid #efeef0; */
+}
+
+.issue__page-right {
+  display: flex;
+  /* border-left: 1px solid rgba(9, 30, 66, 0.14); */
+}
+
+.topbar-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px;
+  gap: 20px;
+  height: 80px;
+  border-bottom: 1px solid #efeef0;
+  border-top: 1px solid #efeef0;
+}
+
+.first {
+  border-left: 1px solid #efeef0;
+}

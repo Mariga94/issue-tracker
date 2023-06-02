@@ -1,0 +1,146 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 100%;
+  font-family: "Inter", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+p {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 17px;
+  font-style: normal;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+ul li {
+  list-style: none;
+}
+
+.app {
+}
+
+.main-content {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  min-height: 89.9svh;
+  /* background-color: beige; */
+}
+
+.container {
+  margin-top: 20px;
+  margin-right: 20px;
+  width: 100%;
+}
+
+.page-title {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+thead {
+  border-bottom: 2px solid rgba(9, 30, 66, 0.14);
+  width: 150%;
+}
+
+.table thead th {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  width: 200px;
+  height: 24px;
+  text-align: start;
+}
+
+.table tbody tr td {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  height: 40px;
+  color: #172b4d;
+  text-align: start;
+}
+
+.table {
+  border-bottom: 2px solid rgba(9, 30, 66, 0.14);
+}
+
+.table tbody tr:hover {
+  background-color: #bbc4ff;
+  cursor: pointer;
+}
+
+.td-select {
+  border: none;
+  /* background-color: #8999ff; */
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  padding: 2px;
+}
+
+.td-select option {
+  background-color: #fff;
+}
+
+.search-input {
+  border: none;
+  padding: 15px 10px;
+  position: relative;
+}
+.search-input:focus,
+.search-input:focus-visible {
+  /* border: 1px solid #707fdd; */
+  border-color: red;
+}
+
+.search-container {
+  width: 270px;
+  border: 1px solid rgba(9, 30, 66, 0.14);
+  /* background-color: red; */
+}
+
+.search-icon {
+  position: absolute;
+  top: 160px;
+  left: 545px;
+  color: gray;
+}
+
+select {
+  width: 139px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.0001);
+  border: none;
+}
+
+select option {
+  box-shadow: 0px 0px 1px rgba(9, 30, 66, 0.31),
+    0px 8px 12px rgba(9, 30, 66, 0.15);
+  border-radius: 3px;
+  width: 157px;
+}

@@ -9,7 +9,6 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Dashboard from "./Pages/Dashboard";
 import Aside from "./components/Aside/Aside";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
@@ -17,8 +16,11 @@ import Home from "./Pages/Home";
 import Teams from "./Pages/Teams";
 import Inbox from "./Pages/Inbox";
 import Issues from "./Pages/Issues";
-import Projects from "./Pages/Project";
+import Projects from "./Pages/Projects";
 import SingleIssue from "./Pages/SingleIssue";
+import SingleProject from "./Pages/SingleProject";
+import UserProfile from "./Pages/UserProfile";
+import NotificationsPage from "./Pages/Notifications";
 
 // Pages
 
@@ -41,8 +43,8 @@ const App: React.FC = () => {
       element: <Layout />,
       children: [
         {
-          path: "/dashboard",
-          element: <Dashboard />,
+          path: "/notifications",
+          element: <NotificationsPage />,
         },
         {
           path: "/home",
@@ -66,8 +68,16 @@ const App: React.FC = () => {
         },
         {
           path: "/issues/:id",
-          element: <SingleIssue/>
-        }
+          element: <SingleIssue />,
+        },
+        {
+          path: "/projects/:id",
+          element: <SingleProject />,
+        },
+        {
+          path: "teams/people/:id",
+          element: <UserProfile />,
+        },
       ],
     },
     {

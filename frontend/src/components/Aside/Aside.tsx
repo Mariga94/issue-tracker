@@ -8,6 +8,7 @@ import {
   FiUsers,
   FiBriefcase,
   FiCheckCircle,
+  FiBell,
 } from "react-icons/fi";
 
 const Aside: React.FC = () => {
@@ -34,15 +35,15 @@ const Aside: React.FC = () => {
         </li>
         <li
           className={
-            selectedItem === "dashboard"
+            selectedItem === "notification"
               ? "aside__list-item selected"
               : "aside__list-item"
           }
-          onClick={() => handleItemClick("dashboard")}
+          onClick={() => handleItemClick("notification")}
         >
-          <NavLink to="/dashboard" className="aside__list-link">
-            <FiBarChart2 className="aside-icons" />
-            Dashboard
+          <NavLink to="/notifications" className="aside__list-link">
+            <FiBell className="aside-icons" size={20} />
+            Notifications
           </NavLink>
         </li>
         <li

@@ -1,0 +1,65 @@
+.card-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px;
+}
+
+.card {
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0px 0px 1px rgba(9, 30, 66, 0.31),
+    0px 8px 12px rgba(9, 30, 66, 0.15);
+  padding: 20px;
+  cursor: pointer;
+}
+
+.card:hover {
+  background: #f7f8f9;
+}
+
+.people-container {
+  margin: 20px 0;
+}
+
+.people {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: start;
+  padding: 12px;
+  margin: 20px 0;
+}
+
+.invite-people-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0px 0px 1px rgba(9, 30, 66, 0.31),
+    0px 8px 12px rgba(9, 30, 66, 0.15);
+  border-radius: 3px;
+  padding: 20px 10px;
+  height: 160px;
+  cursor: pointer;
+}
+
+.invite-people-card:hover {
+  background-color: #f7f8f9;
+}
+.invite-people-card p {
+}
+
+.add-people-form {
+    background-color: #fff;
+    padding: 20px 10px;
+}
+
+.invite-people-card span {
+  background-color: #f7f8f9;
+  padding: 5px;
+  border-radius: 3px;
+}

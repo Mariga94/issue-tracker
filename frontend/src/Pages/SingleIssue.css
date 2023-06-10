@@ -43,3 +43,8 @@
 .first {
   border-left: 1px solid #efeef0;
 }
+
+.issue__page-right {
+  display: flex;
+  flex-direction: column;
+}

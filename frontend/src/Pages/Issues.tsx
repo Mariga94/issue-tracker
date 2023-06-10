@@ -82,6 +82,7 @@ const Issues: React.FC = () => {
   const handleIssueClick = (issueId: number) => {
     navigate(`/issues/${issueId}`);
   };
+  
   return (
     <div className="container">
       <div className="issues">

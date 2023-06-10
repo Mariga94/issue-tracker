@@ -1,0 +1,20 @@
+.notif-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin: 20px 0;
+  height: 25px;
+}
+
+.notif-nav span {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.notif-nav span:not(.nav-selected):hover {
+  border-bottom: 3px solid #a5b5ff;
+}
+
+.nav-selected {
+  border-bottom: 3px solid #5c73db;
+}

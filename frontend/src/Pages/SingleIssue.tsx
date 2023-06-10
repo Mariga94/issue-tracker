@@ -75,6 +75,9 @@ const SingleIssue: React.FC = () => {
               <span>{issue.dueDate}</span>
             </div>
           </div>
+          <div className="comment-section">
+            This is the comment section
+          </div>
         </div>
       </div>
     </div>

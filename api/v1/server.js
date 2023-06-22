@@ -34,8 +34,10 @@ const connectDatabase = async () => {
   }
 };
 
+const allowedOrigins = ['https://issue-tracker-red.vercel.app/', "http://127.0.0.1:5173"]
+
 const corsOptions = {
-  origin: "http://127.0.0.1:5173",
+  origin: allowedOrigins,
   optionSuccessStatus: 200,
   credentials: true,
 };

@@ -1,82 +1,198 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SingleIssue.css";
+import { useParams } from "react-router-dom";
+import newRequest from "../config/newRequest";
+import { formatDateString } from "../utils/formatDate";
+import Message from "../components/Message/message";
+import moment from "moment";
+
+interface Issue {
+  _id: string;
+  assignedTo: {
+    email: string;
+    fullName: string;
+    _id: string;
+  };
+  createdAt: string;
+  description: string;
+  dueDate: string;
+  issueType: string;
+  priority: string;
+  project: string;
+  status: string;
+  summary: string;
+  team: {
+    _id: string;
+    name: string;
+    creator: string;
+    members: [object];
+    createdAt: string;
+  }[];
+  updatedAt: string;
+  user: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+}
+
 const SingleIssue: React.FC = () => {
-  const [issue, setIssue] = useState({
-    id: 1,
-    type: "Bug",
-    summary: "Issue summary",
-    assignee: "John Doe",
-    reporter: "Jane Smith",
-    priority: "High",
-    status: "Open",
-    resolution: "",
-    createdAt: "2023-05-30",
-    updatedAt: "2023-05-30",
-    dueDate: "2023-06-15",
+  const { id } = useParams();
+  const [issue, setIssue] = useState<Issue>({
+    _id: "",
+    assignedTo: {
+      email: "",
+      fullName: "",
+      _id: "",
+    },
+    creator: {
+      _id: "",
+      fullName: ""
+    },
+    createdAt: "",
+    description: "",
+    dueDate: "",
+    issueType: "",
+    priority: "",
+    project: "",
+    status: "",
+    summary: "",
+    team: [
+      {
+        _id: "",
+        name: "",
+        creator: "",
+        members: [],
+        createdAt: "",
+      },
+    ],
+    updatedAt: "",
+    user: {
+      _id: "",
+      fullName: "",
+      email: "",
+    },
   });
 
-  const handleStatusChange = (issueId: number, newValue: string) => {
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState({
+    content: "",
+  });
+
+  const handleInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setMessage((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const issueId = issue._id;
+    const teamId = issue.team[0]._id;
+    try {
+      const data = await newRequest.post("/messages", {
+        issueId,
+        teamId,
+        ...message,
+      });
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const calcDueDate = (d: string) => {
+    const dueDate = moment(d);
+    const currentDate = moment();
+
+    const duration = moment.duration(dueDate.diff(currentDate));
+    const daysRemaining = duration.asDays();
+
+    return Math.ceil(daysRemaining);
+  };
+
+  const daysRemaining = calcDueDate(issue.dueDate);
+  const handleStatusChange = (issueId: string) => {
     return;
   };
 
+  useEffect(() => {
+    const fetchIssue = async (id: string | undefined) => {
+      try {
+        const { data } = await newRequest.get(`/issues/${id}`);
+        setIssue(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchIssue(id);
+  }, [id]);
+  useEffect(() => {
+    const fetchMessages = async (issueId: string | undefined) => {
+      try {
+        const { data } = await newRequest.get(`/messages/${issueId}`);
+        setMessages(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchMessages(id);
+  }, [id]);
+
+  console.log(messages);
   return (
     <div className="container">
       <div className="issue__page">
         <div className="issue__page-left flex-item">
           <div className="topbar-container">
-            <select
-              className="status-select"
-              value={issue.status}
-              onChange={(e) => handleStatusChange(issue.id, e.target.value)}
-            >
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="In Review">In Review</option>
-            </select>
-            <select
-              className="assignee-select"
-              value={issue.assignee}
-              onChange={(e) => handleStatusChange(issue.id, e.target.value)}
-            >
-              <option value="Jane Smith">Jane Smith</option>
-              <option value="John Doe">John Doe</option>
-              <option value="Peter Clavor">Peter Clavor</option>
-              <option value="unassigned">Unassigned</option>
-            </select>
-
-            <select
-              className="assignee-select"
-              value={issue.priority}
-              onChange={(e) => handleStatusChange(issue.id, e.target.value)}
-            >
-              <option value="Jane Smith">Jane Smith</option>
-              <option value="John Doe">John Doe</option>
-              <option value="Peter Clavor">Peter Clavor</option>
-              <option value="unassigned">Unassigned</option>
-            </select>
+            <small>Created by: {issue?.creator?.fullName}</small>
+            <small>Assignee: {issue.assignedTo.fullName}</small>
+            <small>Status: {issue.status}</small>
+            <small>Submit for Review:</small>            
           </div>
-          <h3>{issue.summary}</h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla,
-            soluta minus aliquam voluptatibus praesentium facere reiciendis id,
-            laboriosam, sit sed earum eaque ipsa dicta esse aliquid labore iure.
-            Voluptate, voluptas.
-          </p>
+          <h2 className="page-title">{issue.summary}</h2>
+          <div
+            dangerouslySetInnerHTML={{ __html: issue.description }}
+            className="content-description"
+          />
+          <div className="">
+          </div>
         </div>
         <div className="issue__page-right flex-item">
           <div className="topbar-container first">
             <div className="timeline">
               <p>Created</p>
-              <span>{issue.createdAt}</span>
+              <span>{formatDateString(issue.createdAt).date}</span>
+            </div>
+            <div className="timeline">
+              <p>Updated</p>
+              <span>{formatDateString(issue.updatedAt).date}</span>
             </div>
             <div className="timeline">
               <p>Due Date</p>
-              <span>{issue.dueDate}</span>
+              <span>{formatDateString(issue.dueDate).date}</span>
+            </div>
+            <div className="timeline">
+              <p>Days Remaining</p>
+              <span>{daysRemaining}</span>
             </div>
           </div>
           <div className="comment-section">
-            This is the comment section
+            {messages.map((message) => (
+              <Message key={message._id} message={message} />
+            ))}
+            <form onSubmit={handleSendMessage} className="message-input-box">
+              <textarea
+                className="message-input"
+                placeholder="Type your message...."
+                name="content"
+                value={message.content}
+                onChange={handleInputChange}
+              />
+              <button className="send-button">Send</button>
+            </form>
           </div>
         </div>
       </div>

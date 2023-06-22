@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import "./Issues.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 interface Issue {
   id: number;
   type: string;
@@ -18,50 +19,13 @@ interface Issue {
 
 const Issues: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [issues, setIssues] = useState<Issue[]>([
-    {
-      id: 1,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
-    {
-      id: 1,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
-    {
-      id: 1,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
+  const [project, setProject] = useState({})
+  const [issues, setIssues] = useState<Issue[]>([ 
   ]);
   const [filteredIssues, setFilteredIssues] = useState(issues);
   const navigate = useNavigate();
-
+  const {id} = useParams();
+  console.log('tt')
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);

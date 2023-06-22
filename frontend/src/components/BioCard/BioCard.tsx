@@ -14,11 +14,11 @@ const BioCard: FC<BioCardProps> = (props) => {
   const navigateToUserProfile = useNavigate();
 
   const handleNavigation = () => {
-    navigateToUserProfile(`people/${id}`);
+    navigateToUserProfile(`/teams/${id}/${name}`);
   };
 
   return (
-    <div className="bio-card" onClick={handleNavigation}>
+    <div className="bio-card" onClick={handleNavigation} id={id}>
       <FaUserCircle size={50} color=" #D3D3D3" />
       <p>{name}</p>
       <p>{role}</p>

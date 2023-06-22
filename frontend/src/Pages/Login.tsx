@@ -1,16 +1,20 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import newRequest from "../config/newRequest";
 
 interface LoginFormState {
-  email: "";
-  password: "";
+  email: string;
+  password: string;
 }
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormState>({
     email: "",
     password: "",
   });
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -19,16 +23,70 @@ const Login: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setSuccess(false);
+    setIsLoading(true);
+    try {
+      await newRequest.post("/auth/login", { ...formData }).then((response) => {
+        const { data } = response;
+        console.log(data);
+        const { email, _id } = data;
+        const userData = {
+          email: email,
+          _id: _id,
+        };
+        localStorage.setItem("userData", JSON.stringify(userData));
+      });
+      setSuccess(true);
+      setIsLoading(false);
+      setTimeout(() => {
+        navigate("/projects");
+      }, 2000);
+    } catch (error: unknown) {
+      if ((error as any)?.response) {
+        setError((error as any)?.response?.data);
+      } else if ((error as any).request) {
+        setError("Check your network connection");
+      } else {
+        setError(`An error occured ${(error as any).message}`);
+      }
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    let errorTimeout: ReturnType<typeof setTimeout>;
+    let successTimeout: ReturnType<typeof setTimeout>;
+
+    if (error) {
+      errorTimeout = setTimeout(() => {
+        setError("");
+      }, 10000);
+    }
+
+    if (success) {
+      successTimeout = setTimeout(() => {
+        setSuccess(false);
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(errorTimeout);
+      clearTimeout(successTimeout);
+    };
+  }, [error, success]);
+
   return (
     <div className="register">
       <div className="register__form-title">
         <h2 className="register__form-title-text">Issue Tracker</h2>
       </div>
       <form onSubmit={handleSubmit} className="register__form">
+        {error && <p className="error-message message">{error}</p>}
+        {success && (
+          <p className="success-message message">Login successful!</p>
+        )}
         <div className="register__form-group">
           <label htmlFor="email">Email</label>
 
@@ -57,7 +115,7 @@ const Login: React.FC = () => {
         </div>
         <div className="register__form-group">
           <button type="submit" className="register__form-button">
-            Login
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
 
           <div className="form_state">

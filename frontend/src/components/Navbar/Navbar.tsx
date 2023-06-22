@@ -1,12 +1,19 @@
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
-import { FiUser, FiBell, FiSettings } from "react-icons/fi";
+import { FiBell, FiSettings } from "react-icons/fi";
 import { useState } from "react";
+
 const Navbar = () => {
-  const [showNotifications, setShowNotifications] = useState("false");
+  const [showNotifications] = useState("false");
+  const storedData = localStorage.getItem("userData");
+  const userData = storedData ? JSON.parse(storedData) : null;
+
   const toggleNotifications = () => {
     return !showNotifications;
   };
+
+  
+ 
   return (
     <div className="navbar">
       <div className="navbar__left">
@@ -27,7 +34,9 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li className="navbar__nav-list-item">
-            <div className="avatar"></div>
+            <div className="avatar">
+              
+            </div>
           </li>
         </ul>
       </div>

@@ -1,0 +1,30 @@
+.message {
+    /* display: inline-block; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 400px;
+    background-color: #d7d7d7ca;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.message.current-user {
+    background-color: #5c73db;
+    align-self: flex-end;
+}
+
+.message.other-user {
+    align-self: flex-start;
+}
+
+.message > {
+    margin: 0;
+}
+
+.message .timestamp {
+    font-size: 0.8rem;
+    color: #888;
+}

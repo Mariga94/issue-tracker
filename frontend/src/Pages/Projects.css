@@ -97,3 +97,12 @@
   justify-content: end;
   gap: 10px;
 }
+
+.message-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.w-500 {
+  width: 500px;
+}

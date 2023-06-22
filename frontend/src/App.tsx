@@ -21,6 +21,7 @@ import SingleIssue from "./Pages/SingleIssue";
 import SingleProject from "./Pages/SingleProject";
 import UserProfile from "./Pages/UserProfile";
 import NotificationsPage from "./Pages/Notifications";
+import TeamPage from "./Pages/TeamPage";
 
 // Pages
 
@@ -75,8 +76,8 @@ const App: React.FC = () => {
           element: <SingleProject />,
         },
         {
-          path: "teams/people/:id",
-          element: <UserProfile />,
+          path: "teams/:id/:name",
+          element: <TeamPage />,
         },
       ],
     },

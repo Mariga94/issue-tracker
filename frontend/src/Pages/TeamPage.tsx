@@ -1,30 +1,41 @@
 import React, { useEffect, useState } from "react";
-import "./Teams.css";
-import BioCard from "../components/BioCard/BioCard";
-import { FaUserCircle } from "react-icons/fa";
+import "./TeamPage.css";
+import { useParams } from "react-router-dom";
 import newRequest from "../config/newRequest";
+import Teams from "./Teams";
 
-interface Team {
+interface team {
   _id: string;
   name: string;
-  members: [string];
   creator: string;
+  members: [object];
+  updatedAt: string;
+  createdAt: string;
 }
 
-interface formInterface {
-  teamName: string;
-  memberEmail: string;
+interface memberData {
+  _id: string;
+  email: string;
+  fullName: string;
 }
-const Teams: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+const TeamPage: React.FC = () => {
+  const { id } = useParams();
+  const [team, setTeam] = useState<team>({
+    _id: "",
+    name: "",
+    creator: "",
+    members: [{}],
+    updatedAt: "",
+    createdAt: "",
+  });
   const [showForm, setShowForm] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const [formData, setFormData] = useState<formInterface>({
+  const [formData, setFormData] = useState({
     teamName: "",
     memberEmail: "",
   });
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => {
@@ -48,56 +59,28 @@ const Teams: React.FC = () => {
     }
   };
 
+  const handleAddTeamMember = () => {
+    undefined;
+  };
   useEffect(() => {
-    let errorTimeout: ReturnType<typeof setTimeout>;
-    let successTimeout: ReturnType<typeof setTimeout>;
-
-    if (error) {
-      errorTimeout = setTimeout(() => {
-        setError("");
-      }, 10000);
-    }
-
-    if (success) {
-      successTimeout = setTimeout(() => {
-        setSuccess(false);
-      }, 1000);
-    }
-
-    return () => {
-      clearTimeout(errorTimeout);
-      clearTimeout(successTimeout);
-    };
-  }, [error, success]);
-
-  useEffect(() => {
-    const getAllTeams = async () => {
-      setError(null);
+    const getTeam = async (id: string | undefined) => {
       try {
-        const { data } = await newRequest.get("/teams");
-        setTeams(data);
-        setError(null);
+        const { data } = await newRequest(`/teams/${id}`);
+        setTeam(data);
       } catch (error) {
         console.error(error);
-        setError("Something went wrong");
       }
     };
-    getAllTeams();
-  }, []);
+    getTeam(id);
+  }, [id]);
 
   return (
-    <div className="container">
-      <h2 className="page-title">People and teams</h2>
-      <div className="message-container">
-        {error && <p className="error-message message">{error}</p>}
-        {success && (
-          <p className="success-message message w-500">
-            Teams created successfully
-          </p>
-        )}
-      </div>
-      <div className="people-container">
-        <h3 className="page-title">People</h3>
+    <div className="container flex">
+      <div className="left">
+        <h2 className="page-title team-title">{team.name}</h2>
+        <button className="create-btn" onClick={handleAddTeamMember}>
+          Add Team member
+        </button>
         {showForm && (
           <div className="form-overlay">
             <form className="add-people-form" onSubmit={handleSubmit}>
@@ -143,25 +126,28 @@ const Teams: React.FC = () => {
             </form>
           </div>
         )}
-        <div className="people">
-          <div className="invite-people-card" onClick={() => setShowForm(true)}>
-            <FaUserCircle size={50} color="#D3D3D3" />
-            <p>Your teammate</p>
-            <span>Add people</span>
+        <div className="">
+          <h3 className="page-title">
+            {team.members.length > 1 ? "Members" : "Member"}
+          </h3>
+          <span>{team.members.length}</span>
+          <div className="">
+            {team.members.map((member: memberData) => {
+              return (
+                <ul>
+                  <li key={member._id} id={member._id} className="member-list">
+                    {member.fullName}
+                    <p>Software engineer</p>
+                  </li>
+                </ul>
+              );
+            })}
           </div>
         </div>
       </div>
-      <div className="people-container">
-        <h3 className="page-title">Teams</h3>
-
-        <div className="people">
-          {teams.map((team) => {
-            return <BioCard name={team.name} id={team._id} role="" />;
-          })}
-        </div>
-      </div>
+      <div className="right">Activity</div>
     </div>
   );
 };
 
-export default Teams;
+export default TeamPage;

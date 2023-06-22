@@ -1,84 +1,109 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "./SingleProject.css";
 import { FiSearch } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import newRequest from "../config/newRequest";
+import { formatDateString } from "../utils/formatDate";
 
+interface ProjectData {
+  _id: string;
+  name: string;
+  user: object;
+  createdAt: string;
+  updatedAt: string;
+  team: string[];
+  projects: string[];
+}
+
+interface User {
+  _id: string;
+  fullName: string;
+  email: string;
+  projects: [string];
+  issues: [string];
+  teams: [object];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface IssueData {
+  project: string;
+  summary: string;
+  status: string;
+  issueType: string;
+  description: string;
+  team: string;
+  reporter: string;
+  priority: string;
+  dueDate: string;
+  assignedTo: string;
+}
+
+interface Issues {
+  _id: string;
+  project: string;
+  summary: string;
+  status: string;
+  issueType: string;
+  description: string;
+  reporter: string;
+  priority: string;
+  dueDate: string;
+  team: string;
+  assignedTo: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Team{
+  _id: string
+}
+
+interface teamArr {
+  _id: string;
+  members: [string];
+  name: string;
+  creator: string;
+  createdAt: string;
+  updatedAt: string;
+}
 const SingleProject: React.FC = () => {
-  //   const [state, dispatch] = useReducer(reducer, initialState);
-  const [state, setState] = useState({
-    description: "", // Initialize description as an EditorState object
-    project: "",
-    issueType: "",
-    status: "",
-    summary: "",
-    reporter: "",
-    priority: "",
-    dueDate: "",
-    assignee: "",
-  });
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [shouldHideBorder, setShouldHideBorder] = useState(false);
-  const [project, setProject] = useState({
-    id: 1,
-    title: "Project",
-    lead: "Leader1",
-    createdAt: "10th May 2020",
-    modified: "N/A",
+  const { id } = useParams();
+  const userData = localStorage.getItem("userData");
+  const currentUser: User | null = userData ? JSON.parse(userData) : null;
+  const [teamsArr, setTeamsArr] = useState<teamArr[]>([]);
+  const [teamMembers, setTeamMembers] = useState<User[]>([]);
+  const [project, setProject] = useState<ProjectData>({
+    _id: "",
+    name: "",
+    user: {},
+    createdAt: "",
+    updatedAt: "",
+    team: [],
+    projects: [],
   });
-  const [issues, setIssues] = useState([
-    {
-      id: 1,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
-    {
-      id: 2,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
-    {
-      id: 3,
-      type: "Bug",
-      summary: "Issue summary",
-      assignee: "John Doe",
-      reporter: "Jane Smith",
-      priority: "High",
-      status: "Open",
-      resolution: "",
-      createdAt: "2023-05-30",
-      updatedAt: "2023-05-30",
-      dueDate: "2023-06-15",
-    },
-  ]);
+  const [issues, setIssues] = useState<Issues[]>([]);
+  const [issueFormData, setIssueFormData] = useState<IssueData>({
+    project: "",
+    summary: "",
+    status: "",
+    issueType: "",
+    description: "",
+    reporter: "",
+    priority: "",
+    team: "",
+    dueDate: "",
+    assignedTo: "",
+  });
+  const [selectedTeam, setSelectedTeam] = useState("");
+  const [filteredIssues, setFilteredIssues] = useState<Issues[]>(issues);
 
-  const [filteredIssues, setFilteredIssues] = useState(issues);
-
-  const handleFieldValueChange = (field: string, value: string) => {
-    setState((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
-  };
+  // console.log(filteredIssues, issues);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -89,38 +114,119 @@ const SingleProject: React.FC = () => {
     setFilteredIssues(filteredIssues);
   };
 
-  const handleStatusChange = (issueId: number, newValue: string) => {
-    setIssues((prevIssues) =>
-      prevIssues.map((issue) =>
-        issue.id === issueId ? { ...issue, status: newValue } : issue
-      )
-    );
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setIssueFormData((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const dateValue =
+      name === "dueDate" ? new Date(value).toISOString().split("T")[0] : value;
+    setIssueFormData((prev) => ({
+      ...prev,
+      [name]: dateValue,
+    }));
+  };
+
+  const handleQuillChange = (value: string) => {
+    setIssueFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
   };
 
   const handleCreateIssueClick = () => {
     setShowForm((prev) => !prev);
   };
 
-  const handleIssueClick = (issueId: number) => {
+  const handleIssueClick = (issueId: string) => {
     navigate(`/issues/${issueId}`);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Perform form submission or data processing here
+    try {
+      await newRequest.post(`/projects/${id}/issues`, { ...issueFormData });
+      setShowForm(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  function handleScroll() {
-    const formContainer = document.querySelector(".form-container");
-    const titleContainer = document.getElementById("title-container");
-  }
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTeamId = e.target.value;
+    const { name, value } = e.target;
 
+    setIssueFormData((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+
+    setSelectedTeam(selectedTeamId);
+
+    const selectedTeamObj = teamsArr.find(
+      (team: teamArr) => team._id === selectedTeamId
+    );
+    setTeamMembers(selectedTeamObj ? selectedTeamObj.members : []);
+  };
+
+  useEffect(() => {
+    const getProject = async (id: string | undefined) => {
+      try {
+        const { data } = await newRequest.get(`/project/${id}`);
+        setProject(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getProject(id);
+  }, [id]);
+
+  useEffect(() => {
+    const getIssues = async (id: string | undefined) => {
+      try {
+        const { data } = await newRequest.get(`/projects/${id}/issues`);
+        setIssues(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getIssues(id);
+  }, [id]);
+
+  useEffect(() => {
+    const { _id } = currentUser || {};
+
+    const getUserInfo = async (id: string) => {
+      try {
+        const { data } = await newRequest.get(`/users/${id}`);
+        setTeamsArr(data.teams);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (_id) {
+      getUserInfo(_id);
+    }
+  }, [currentUser]);
+
+    
   return (
     <div className="container">
       <div className="project">
         <div className="breadcrumbs">
           <span>Projects / </span>
-          <span>{project.title}</span>
+          <span>{project.name}</span>
         </div>
 
         <div className="con">
@@ -140,7 +246,7 @@ const SingleProject: React.FC = () => {
         </div>
         {showForm && (
           <div className="form-overlay">
-            <div className="form-container" onScroll={handleScroll}>
+            <div className="form-container">
               <div className={`issue-form__title-container`}>
                 <h2 className="issue-form__title">Create New Issue</h2>
               </div>
@@ -152,17 +258,13 @@ const SingleProject: React.FC = () => {
                   <select
                     className="issue-form__select"
                     id="project-select"
-                    value={state.project}
-                    onChange={(e) =>
-                      handleFieldValueChange("project", e.target.value)
-                    }
+                    name="project"
+                    required
+                    value={issueFormData.project}
+                    onChange={handleDropdownChange}
                   >
-                    <option value="">Project 1</option>
-                    <option value="">Project 2</option>
-                    <option value="">Project 3</option>
-                    <option value="">Project 4</option>
-                    {/* Render options dynamically from project API endpoint */}
-                    {/* Example: <option value="project1">Project 1</option> */}
+                    <option value="">Select Project</option>
+                    <option value={project._id}>{project.name}</option>
                   </select>
                 </div>
                 <div className="issue-form__field">
@@ -175,15 +277,17 @@ const SingleProject: React.FC = () => {
                   <select
                     className="issue-form__select"
                     id="issue-type-select"
-                    value={state.issueType}
-                    onChange={(e) =>
-                      handleFieldValueChange("issueType", e.target.value)
-                    }
+                    value={issueFormData.issueType}
+                    name="issueType"
+                    required
+                    onChange={handleDropdownChange}
                   >
                     <option value="">Select Issue Type</option>
-                    <option value="task">Task</option>
-                    <option value="improvement">Improvement</option>
-                    <option value="new-feature">New Feature</option>
+                    <option value="Task">Task</option>
+                    <option value="Bug">Bug</option>
+                    <option value="To Do">To Do</option>
+                    <option value="Improvement">Improvement</option>
+                    <option value="New feature">New Feature</option>
                   </select>
                 </div>
                 <div className="issue-form__field">
@@ -193,15 +297,17 @@ const SingleProject: React.FC = () => {
                   <select
                     className="issue-form__select status"
                     id="status-select"
-                    value={state.status}
-                    onChange={(e) =>
-                      handleFieldValueChange("status", e.target.value)
-                    }
+                    name="status"
+                    required
+                    value={issueFormData.status}
+                    onChange={handleDropdownChange}
                   >
                     <option value="">Status</option>
-                    <option value="inprogress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="done">Done</option>
+                    <option value="Open">Open</option>
+                    <option value="In progress">In Progress</option>
+                    <option value="In Review"></option>
+                    <option value="Completed">Completed</option>
+                    <option value="Done">Done</option>
                   </select>
                 </div>
                 <div className="issue-form__field">
@@ -212,10 +318,10 @@ const SingleProject: React.FC = () => {
                     className="issue-form__text"
                     type="text"
                     id="summary-input"
-                    value={state.summary}
-                    onChange={(e) =>
-                      handleFieldValueChange("status", e.target.value)
-                    }
+                    name="summary"
+                    required
+                    value={issueFormData.summary}
+                    onChange={handleOnChange}
                   />
                 </div>
                 <div className="issue-form__field quill">
@@ -225,7 +331,12 @@ const SingleProject: React.FC = () => {
                   >
                     Description
                   </label>
-                  <ReactQuill theme="snow" className="react-quill" />
+                  <ReactQuill
+                    theme="snow"
+                    className="react-quill"
+                    value={issueFormData.description}
+                    onChange={handleQuillChange}
+                  />
                 </div>
                 <div className="issue-form__field">
                   <label htmlFor="reporter-input" className="issue-form__label">
@@ -235,10 +346,10 @@ const SingleProject: React.FC = () => {
                     type="text"
                     className="issue-form__text"
                     id="reporter-input"
-                    value={state.reporter}
-                    onChange={(e) =>
-                      handleFieldValueChange("reporter", e.target.value)
-                    }
+                    name="reporter"
+                    required
+                    value={issueFormData.reporter}
+                    onChange={handleOnChange}
                   />
                 </div>
                 <div className="issue-form__field">
@@ -251,17 +362,17 @@ const SingleProject: React.FC = () => {
                   <select
                     className="issue-form__select"
                     id="priority-select"
-                    value={state.priority}
-                    onChange={(e) =>
-                      handleFieldValueChange("priority", e.target.value)
-                    }
+                    name="priority"
+                    required
+                    value={issueFormData.priority}
+                    onChange={handleDropdownChange}
                   >
                     <option value="">Select Priority</option>
-                    <option value="highest">Highest</option>
-                    <option value="high">High</option>
-                    <option value="lowest">Lowest</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
+                    <option value="Highest">Highest</option>
+                    <option value="High">High</option>
+                    <option value="Lowest">Lowest</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
                   </select>
                 </div>
                 <div className="issue-form__field">
@@ -271,13 +382,35 @@ const SingleProject: React.FC = () => {
                   <input
                     type="date"
                     id="due-date-input"
+                    required
                     className="issue-form__select date-field"
-                    value={state.dueDate}
-                    onChange={(e) =>
-                      handleFieldValueChange("dueDate", e.target.value)
-                    }
+                    value={issueFormData.dueDate}
+                    name="dueDate"
+                    onChange={handleOnChange}
                   />
                 </div>
+
+                <div className="issue-form__field">
+                  <label htmlFor="team-select" className="issue-form__label">
+                    Teams:
+                  </label>
+                  <select
+                    className="issue-form__select"
+                    id="assignee-select"
+                    required
+                    name="team"
+                    value={selectedTeam}
+                    onChange={handleTeamChange}
+                  >
+                    <option value="">Select Team</option>
+                    {teamsArr.map((team) => (
+                      <option key={team._id} value={team._id}>
+                        {team.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="issue-form__field">
                   <label
                     htmlFor="assignee-select"
@@ -288,14 +421,17 @@ const SingleProject: React.FC = () => {
                   <select
                     className="issue-form__select"
                     id="assignee-select"
-                    value={state.assignee}
-                    onChange={(e) =>
-                      handleFieldValueChange("assignee", e.target.value)
-                    }
+                    required
+                    name="assignedTo"
+                    value={issueFormData.assignedTo}
+                    onChange={handleDropdownChange}
                   >
                     <option value="">Select Assignee</option>
-                    {/* Render options dynamically from users API endpoint */}
-                    {/* Example: <option value="user1">User 1</option> */}
+                    {teamMembers.map((member) => (
+                      <option key={member._id} value={member._id}>
+                        {member.fullName}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="issue-from__button-container">
@@ -321,47 +457,32 @@ const SingleProject: React.FC = () => {
         {issues.length === 0 ? (
           <p>No Issues</p>
         ) : (
-          <table className="table">
+          <table className="table issue-table">
             <thead>
               <tr>
                 <th>Type</th>
                 <th>Summary</th>
                 <th>Assignee</th>
-                <th>Reporter</th>
+               
                 <th>Priority</th>
                 <th>Status</th>
-                <th>Resolution</th>
                 <th>Created At</th>
                 <th>Updated At</th>
                 <th>Due Date</th>
               </tr>
             </thead>
             <tbody>
-              {filteredIssues.map((issue) => (
-                <tr key={issue.id} onClick={() => handleIssueClick(issue.id)}>
-                  <td>{issue.type}</td>
+              {issues.map((issue: Issues) => (
+                <tr key={issue._id} onClick={() => handleIssueClick(issue._id)}>
+                  <td>{issue.issueType}</td>
                   <td>{issue.summary}</td>
-                  <td>{issue.assignee}</td>
-                  <td>{issue.reporter}</td>
+                  <td>{issue.assignedTo.fullName}</td>
+                  {/* <td>{issue.reporter}</td> */}
                   <td>{issue.priority}</td>
-                  <td>
-                    <select
-                      className="td-select"
-                      value={issue.status}
-                      onChange={(e) =>
-                        handleStatusChange(issue.id, e.target.value)
-                      }
-                    >
-                      <option value="Open">Open</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="In Review">In Review</option>
-                    </select>
-                  </td>
-                  <td>{issue.resolution}</td>
-                  <td>{issue.createdAt}</td>
-                  <td>{issue.updatedAt}</td>
-                  <td>{issue.dueDate}</td>
+                  <td>{issue.status}</td>
+                  <td>{formatDateString(issue.createdAt).date}</td>
+                  <td>{formatDateString(issue.updatedAt).date}</td>
+                  <td>{formatDateString(issue.dueDate).date}</td>
                 </tr>
               ))}
             </tbody>

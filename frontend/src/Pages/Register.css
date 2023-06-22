@@ -43,12 +43,31 @@
   height: 48px;
   border-radius: 12px;
   color: #fff;
+  cursor: pointer;
 }
 
 .form_state {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .register__form-icon {
+}
+
+.error-message {
+  background-color: red;
+}
+
+.message {
+  display: flex;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.success-message {
+  background-color: rgba(0, 128, 0, 0.79);
+  border-radius: 4px;
+  margin: 10px 0;
 }

@@ -19,7 +19,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 const connectDatabase = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL, {
+    await mongoose.connect(`mongodb+srv://joseph4muriuki:${process.env.MONGO_PWD}@cluster0.xsp2hkb.mongodb.net/?retryWrites=true&w=majority`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

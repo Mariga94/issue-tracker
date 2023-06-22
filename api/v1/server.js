@@ -10,19 +10,24 @@ import v1projectRouter from "./routes/projectRoutes.js";
 import v1IssueRouter from "./routes/issueRoutes.js";
 import v1TeamRouter from "./routes/teamRoutes.js";
 import v1TeamInvitationRouter from "./routes/teamInvitationRoutes.js";
-import v1Message from "./routes/messageRoutes.js"
+import v1Message from "./routes/messageRoutes.js";
 import { hostname } from "os";
+import os from "os"
 
 const app = express();
 dotenv.config();
 
 const PORT = process.env.PORT;
+const IPAddress = getIPAddress();
 const connectDatabase = async () => {
   try {
-    await mongoose.connect(`mongodb+srv://joseph4muriuki:${process.env.MONGO_PWD}@cluster0.xsp2hkb.mongodb.net/?retryWrites=true&w=majority`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(
+      `mongodb+srv://joseph4muriuki:${process.env.MONGO_PWD}@cluster0.xsp2hkb.mongodb.net/?retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
     console.log("Connection made successfully to MongoDB!");
   } catch (error) {
     console.error(error);
@@ -43,12 +48,30 @@ app.use("/api/v1/auth", v1authRouter);
 app.use("/api/v1/users", v1userRouter);
 app.use("/api/v1/project", v1projectRouter);
 app.use("/api/v1/projects", v1IssueRouter);
-app.use("/api/v1/issues",v1IssueRouter);
+app.use("/api/v1/issues", v1IssueRouter);
 app.use("/api/v1/teams", v1TeamRouter);
 app.use("/api/v1/teamInvitation", v1TeamInvitationRouter);
-app.use("/api/v1/messages", v1Message)
+app.use("/api/v1/messages", v1Message);
 
-app.listen(PORT, hostname, () => {
+app.listen(PORT, hostname, IPAddress, () => {
   connectDatabase();
-  console.log(`Express API running on ${hostname} ${PORT}`);
+  console.log(`Express API running on ${hostname} ${PORT} on IP ${IPAddress}`);
 });
+
+function getIPAddress() {
+  const interfaces = os.networkInterfaces();
+  for (var devName in interfaces) {
+    let iface = interfaces[devName];
+
+    for (let i = 0; i < iface.length; i++) {
+      let alias = iface[i];
+      if (
+        alias.family === "IPv4" &&
+        alias.address !== "127.0.0.1" &&
+        !alias.internal
+      )
+        return alias.address;
+    }
+  }
+  return "0.0.0.0";
+}

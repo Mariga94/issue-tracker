@@ -6,23 +6,34 @@ const { Schema } = mongoose;
  * @property {string} user - The ID of the creater of the project
  * @property {string} issues - The ID of list of issues created by user
  */
-const projectSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const projectSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    key: {
+      type: String,
+      required: false,
+    },
+    team: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    type: {
+      type: String,
+      enum: ["company", "personal", "School"],
+      required: false,
+    },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    issues: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
   },
-  key: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: ["company", "personal", "School"],
-    required: true,
-  },
-  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  issues: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Project = mongoose.model("Project", projectSchema);
 export default Project;

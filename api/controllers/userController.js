@@ -1,8 +1,13 @@
 import User from "../models/userModel.js";
 
 export const getUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  res.status(200).send(user);
+  try {
+    const user = await User.getUser(req.params.id);
+    res.status(200).send(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Something went wrong!")
+  }
 };
 
 export const getUsers = async (req, res) => {

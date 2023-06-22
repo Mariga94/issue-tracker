@@ -5,9 +5,10 @@ import Project from "../models/projectModel.js";
 export const create = async (req, res) => {
   try {
     // const name = req.body.name;
-    const { name, key, type } = req.body;
+    const { name } = req.body;
+
     const userId = req.userId;
-    const project = await User.createProject(name, key, type, userId);
+    const project = await User.createProject(name, userId);
     res.send(project);
   } catch (err) {
     console.log(err);

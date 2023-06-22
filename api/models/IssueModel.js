@@ -16,54 +16,69 @@ const issueSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: false,
+    },
+    project: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
     },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
       // required: true,
     },
-    isReporter: {
-      type: Boolean,
-      default: false,
-    },
     assignedTo: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    timeline: {
-      type: String,
-      required: true,
-      default: "ToDo",
-    },
     issueType: {
       type: String,
-      enum: ["Bug", "Improvement", "Task", "New feature", "ToDo"],
+      enum: ["Bug", "Improvement", "Task", "New feature", "To Do"],
       required: true,
     },
     status: {
       type: String,
       required: true,
-      enum: ["Open", "In progress", "In Review", "Done"],
+      enum: ["Open", "In progress", "In Review", "Done", "Completed"],
       default: "Open",
     },
     priority: {
       type: String,
-      enum: ["Highest", "High", "Low", "Lowest"],
+      enum: ["Highest", "High", "Low", "Lowest", "Medium"],
       default: "High",
       required: true,
     },
     summary: {
       type: String,
-      required: true,
+      required: false,
     },
     description: {
       type: String,
       required: false,
     },
+    dueDate: {
+      type: String,
+      required: false,
+    },
+    reporter: {
+      type: String,
+      required: false
+    },
+    creator: {
+      type: String,
+      required: false
+    },
+    team: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Team",
+        },
+      ],
+    },
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 );
 

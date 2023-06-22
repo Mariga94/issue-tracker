@@ -8,13 +8,16 @@ import {
   getAllIssues,
   getAllIssuesByProjectId,
   getIssue,
+  getOneIssue,
 } from "../../controllers/issueControllers.js";
 const router = express.Router();
 
 // create a new issue for a specific project
 router.post("/:projectId/issues", authUser, createIssue);
 // get all the issues
-router.get("/issues", authUser, getAllIssues);
+router.get("/", authUser, getAllIssues);
+
+router.get("/:id", authUser, getOneIssue);
 // get all issues in a specific project ID
 router.get("/:projectId/issues", authUser, getAllIssuesByProjectId);
 //get a specified issue from a specified projectID

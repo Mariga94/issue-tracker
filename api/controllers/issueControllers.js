@@ -7,7 +7,6 @@ export const createIssue = async (req, res) => {
     const userId = req.userId;
     const projectId = req.params.projectId;
     const { ...data } = req.body;
-    //   console.log('data:',data)
     const issue = await User.createIssue(userId, projectId, data);
     res.send(issue).status(201);
   } catch (error) {
@@ -34,12 +33,12 @@ export const getAllIssues = async (req, res) => {
 };
 
 export const getAllIssuesByProjectId = async (req, res) => {
-  try{
-  const projectId = req.params.projectId;
-  const allIssuesByProjectId = await User.getAllIssuesByProjectId(projectId);
-  res.send(allIssuesByProjectId).status(200);
+  try {
+    const projectId = req.params.projectId;
+    const allIssuesByProjectId = await User.getAllIssuesByProjectId(projectId);
+    res.send(allIssuesByProjectId).status(200);
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
   }
 };
 
@@ -81,5 +80,16 @@ export const changeIssuePriority = async (req, res) => {
     res.send(issue).status(200);
   } catch (error) {
     res.send(error).status(500);
+  }
+};
+
+export const getOneIssue = async (req, res) => {
+  try {
+    const issue = await User.getIssue(req.params.id);
+    console.log('Get one issue')
+    res.status(200).send(issue);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong!");
   }
 };

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Project from "./projectModel.js";
 import Issue from "./IssueModel.js";
+import Team from "./teamModel.js";
 
 const { Schema } = mongoose;
 
@@ -18,11 +19,15 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
       required: false,
     },
-    lastName: {
+    googleId: {
+      type: String,
+      required: false,
+    },
+    githubId: {
       type: String,
       required: false,
     },
@@ -49,6 +54,14 @@ const userSchema = new Schema(
     issues: {
       type: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
     },
+    teams: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Team",
+        },
+      ],
+    },
   },
   {
     timestamps: true,
@@ -61,8 +74,8 @@ const userSchema = new Schema(
  * @returns {Promise<Project>} The created project
  * @throws {Error} if the new project could not be created
  */
-userSchema.statics.createProject = async function (name, key, type, userId) {
-  const newProject = new Project({ name, key, type, user: userId });
+userSchema.statics.createProject = async function (name, userId) {
+  const newProject = new Project({ name, user: userId });
   await newProject.save();
   const user = await this.findById(userId);
   user.projects.push(newProject);
@@ -85,8 +98,11 @@ userSchema.statics.getProject = async function (projectId) {
 };
 
 userSchema.statics.getAllProjects = async function () {
-  const projects = Project.find();
-  if (!projects) {
+  const projects = await Project.find().select(
+    "name key team type user issues createdAt updatedAt"
+  );
+
+  if (!projects.length === 0) {
     throw Error("No Available projects.");
   }
   return projects;
@@ -110,16 +126,19 @@ userSchema.statics.createIssue = async function (userId, projectId, data) {
   const user = await User.findById(userId);
   const project = await Project.findById(projectId);
   const newIssue = new Issue({
-    name: data.name,
     user: user._id,
+    creator: user._id,
     project: project._id,
+    summary: data.summary,
+    team: data.team,
     assignedTo: data.assignedTo,
     timeline: data.timeline,
     issueType: data.issueType,
     status: data.status,
     priority: data.priority,
-    shortDesc: data.shortDesc,
-    longDesc: data.longDesc,
+    description: data.description,
+    reporter: data.reporter,
+    dueDate: data.dueDate,
   });
   newIssue.save();
   project.issues.push(newIssue);
@@ -135,16 +154,43 @@ userSchema.statics.getOneIssue = async function (projectId, issueId) {
   return await Issue.find(issue);
 };
 
+userSchema.statics.getIssue = async function (issueId) {
+  try {
+    const issue = await Issue.findById(issueId)
+      .populate({ path: "assignedTo", select: "_id fullName email" })
+      .populate("team")
+      .populate({
+        path: "creator",
+        select: "fullName _id",
+      })
+      .populate({
+        path: "user",
+        select: "_id fullName email",
+      });
+    return issue;
+  } catch (err) {
+    throw new Error(`Can't fetch issue with ${issueId}`);
+  }
+};
+
 /**
  *
- * @returns {Promise<issues>} - All the issues from the all the projects created
+ * @returns {Promise<issue>} - All the issues from the all the projects created
  */
 userSchema.statics.getAllIssues = async function () {
-  const issues = await Issue.find();
-  if (!issues) {
-    throw new Error("No issues");
+  try {
+    const issues = await Issue.find()
+      .select(
+        "project summary status issuType description team priority dueDate assignedTo createdAt updatedAt"
+      )
+      .populate("assignedTo", "fullName");
+    if (!issues) {
+      throw new Error("No issues");
+    }
+    return issues;
+  } catch (error) {
+    throw new Error("An error occured when fetching issues");
   }
-  return issues;
 };
 
 /**
@@ -153,8 +199,18 @@ userSchema.statics.getAllIssues = async function () {
  * @returns {Promise<project.issues>} - The issues stored by the project ID
  */
 userSchema.statics.getAllIssuesByProjectId = async function (projectId) {
-  const project = await Project.findById(projectId).populate("issues");
-  return project.issues
+  try {
+    const project = await Project.findById(projectId).populate({
+      path: "issues",
+      populate: {
+        path: "assignedTo",
+        model: this,
+      },
+    });
+    return project.issues;
+  } catch (error) {
+    throw new Error("Failed to return issues");
+  }
 };
 
 /**
@@ -310,5 +366,22 @@ userSchema.methods.lowestPriority = async function (issueId) {
   return this.changeIssueType(issueId, "Lowest");
 };
 
+userSchema.statics.getUser = async function (userId) {
+  try {
+    const user = this.findById(userId)
+      .select("-password")
+      .populate({
+        path: "teams",
+        select: "-password",
+        populate: { path: "members" },
+      })
+      .populate("projects")
+      .populate("issues")
+      .exec();
+    return user;
+  } catch (error) {
+    throw new Error("Use cannot be found");
+  }
+};
 const User = mongoose.model("User", userSchema);
 export default User;

@@ -1,10 +1,8 @@
-import React, { Children, useState } from "react";
+import React from "react";
 import "normalize.css";
 import "./App.css";
 import {
   Outlet,
-  Route,
-  Router,
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
@@ -19,7 +17,6 @@ import Issues from "./Pages/Issues";
 import Projects from "./Pages/Projects";
 import SingleIssue from "./Pages/SingleIssue";
 import SingleProject from "./Pages/SingleProject";
-import UserProfile from "./Pages/UserProfile";
 import NotificationsPage from "./Pages/Notifications";
 import TeamPage from "./Pages/TeamPage";
 

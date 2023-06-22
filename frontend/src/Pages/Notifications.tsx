@@ -8,7 +8,7 @@ interface Notification {
 }
 
 const NotificationsPage: FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
+  const [notifications,] = useState<Notification[]>([
     {
       id:'1',
       text: 'Add button',

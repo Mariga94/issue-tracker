@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import "./Aside.css";
 import {
   FiHome,
-  FiBarChart2,
   FiInbox,
   FiUsers,
   FiBriefcase,

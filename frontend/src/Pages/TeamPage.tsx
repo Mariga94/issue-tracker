@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./TeamPage.css";
 import { useParams } from "react-router-dom";
 import newRequest from "../config/newRequest";
-import Teams from "./Teams";
 
 interface team {
   _id: string;
@@ -29,8 +28,8 @@ const TeamPage: React.FC = () => {
     createdAt: "",
   });
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
+  // const [error, setError] = useState<string | null>(null);
+  // const [success, setSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     teamName: "",
     memberEmail: "",
@@ -44,8 +43,8 @@ const TeamPage: React.FC = () => {
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(false);
+    // setError(null);
+    // setSuccess(false);
     try {
       await newRequest.post("/teams", { ...formData });
       setShowForm(false);
@@ -53,7 +52,7 @@ const TeamPage: React.FC = () => {
         teamName: "",
         memberEmail: "",
       });
-      setSuccess(true);
+      // setSuccess(true);
     } catch (error) {
       console.log(error);
     }
@@ -132,16 +131,16 @@ const TeamPage: React.FC = () => {
           </h3>
           <span>{team.members.length}</span>
           <div className="">
-            {team.members.map((member: memberData) => {
-              return (
-                <ul>
+            <ul>
+              {(team.members as memberData[]).map((member: memberData) => {
+                return (
                   <li key={member._id} id={member._id} className="member-list">
                     {member.fullName}
                     <p>Software engineer</p>
                   </li>
-                </ul>
-              );
-            })}
+                );
+              })}
+            </ul>
           </div>
         </div>
       </div>

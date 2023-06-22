@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import "./Issues.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 interface Issue {
   id: number;
@@ -19,13 +19,10 @@ interface Issue {
 
 const Issues: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [project, setProject] = useState({})
   const [issues, setIssues] = useState<Issue[]>([ 
   ]);
   const [filteredIssues, setFilteredIssues] = useState(issues);
   const navigate = useNavigate();
-  const {id} = useParams();
-  console.log('tt')
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);

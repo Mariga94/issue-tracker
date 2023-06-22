@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SingleProject.css";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,6 +41,8 @@ interface IssueData {
   assignedTo: string;
 }
 
+
+
 interface Issues {
   _id: string;
   project: string;
@@ -52,25 +54,21 @@ interface Issues {
   priority: string;
   dueDate: string;
   team: string;
-  assignedTo: string;
+  assignedTo: User;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface Team{
-  _id: string
-}
-
 interface teamArr {
   _id: string;
-  members: [string];
+  members: [User];
   name: string;
   creator: string;
   createdAt: string;
   updatedAt: string;
 }
 const SingleProject: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   const [showForm, setShowForm] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -101,18 +99,22 @@ const SingleProject: React.FC = () => {
     assignedTo: "",
   });
   const [selectedTeam, setSelectedTeam] = useState("");
-  const [filteredIssues, setFilteredIssues] = useState<Issues[]>(issues);
+  // const [filteredIssues, setFilteredIssues] = useState<Issues[]>(issues);
 
   // console.log(filteredIssues, issues);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    const filteredIssues = value
-      ? issues.filter((issue) => issue.summary.toLowerCase().includes(value))
-      : issues;
-    setFilteredIssues(filteredIssues);
-  };
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setSearchTerm(value);
+  //   const filteredIssues = value
+  //     ? issues.filter((issue) => issue.summary.toLowerCase().includes(value))
+  //     : issues;
+  //   setFilteredIssues(filteredIssues);
+  // };
+
+  const handleSearch = () => {
+    undefined
+  }
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -477,7 +479,7 @@ const SingleProject: React.FC = () => {
                   <td>{issue.issueType}</td>
                   <td>{issue.summary}</td>
                   <td>{issue.assignedTo.fullName}</td>
-                  {/* <td>{issue.reporter}</td> */}
+                  <td>{issue.reporter}</td>
                   <td>{issue.priority}</td>
                   <td>{issue.status}</td>
                   <td>{formatDateString(issue.createdAt).date}</td>

@@ -1,7 +1,6 @@
 import React from "react";
 import "./message.css";
 import { formatDateString } from "../../utils/formatDate";
-import { json } from "react-router-dom";
 
 interface Message {
   content: string;

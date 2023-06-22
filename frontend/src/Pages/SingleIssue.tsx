@@ -21,6 +21,10 @@ interface Issue {
   project: string;
   status: string;
   summary: string;
+  creator: {
+    _id: string;
+    fullName: string;
+  };
   team: {
     _id: string;
     name: string;
@@ -36,6 +40,27 @@ interface Issue {
   };
 }
 
+interface MessageData {
+  _id: string;
+  content: string;
+  sender: {
+    _id: string;
+    fullName: string;
+  };
+  createdAt: string;
+}
+
+// interface User {
+//   _id: string;
+//   fullName: string;
+//   email: string;
+//   projects: [string];
+//   issues: [string];
+//   teams: [object];
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
 const SingleIssue: React.FC = () => {
   const { id } = useParams();
   const [issue, setIssue] = useState<Issue>({
@@ -46,8 +71,8 @@ const SingleIssue: React.FC = () => {
       _id: "",
     },
     creator: {
+      fullName: "",
       _id: "",
-      fullName: ""
     },
     createdAt: "",
     description: "",
@@ -62,7 +87,7 @@ const SingleIssue: React.FC = () => {
         _id: "",
         name: "",
         creator: "",
-        members: [],
+        members: [{}],
         createdAt: "",
       },
     ],
@@ -74,13 +99,13 @@ const SingleIssue: React.FC = () => {
     },
   });
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [message, setMessage] = useState({
     content: "",
   });
 
   const handleInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target as HTMLTextAreaElement;
     setMessage((prev) => {
       return {
         ...prev,
@@ -114,9 +139,9 @@ const SingleIssue: React.FC = () => {
   };
 
   const daysRemaining = calcDueDate(issue.dueDate);
-  const handleStatusChange = (issueId: string) => {
-    return;
-  };
+  // const handleStatusChange = (issueId: string) => {
+  //   return;
+  // };
 
   useEffect(() => {
     const fetchIssue = async (id: string | undefined) => {
@@ -147,18 +172,17 @@ const SingleIssue: React.FC = () => {
       <div className="issue__page">
         <div className="issue__page-left flex-item">
           <div className="topbar-container">
-            <small>Created by: {issue?.creator?.fullName}</small>
+            <small>Created by: {issue.creator.fullName}</small>
             <small>Assignee: {issue.assignedTo.fullName}</small>
             <small>Status: {issue.status}</small>
-            <small>Submit for Review:</small>            
+            <small>Submit for Review:</small>
           </div>
           <h2 className="page-title">{issue.summary}</h2>
           <div
             dangerouslySetInnerHTML={{ __html: issue.description }}
             className="content-description"
           />
-          <div className="">
-          </div>
+          <div className=""></div>
         </div>
         <div className="issue__page-right flex-item">
           <div className="topbar-container first">

@@ -5,9 +5,7 @@ import { useState } from "react";
 
 const Navbar = () => {
   const [showNotifications] = useState("false");
-  const storedData = localStorage.getItem("userData");
-  const userData = storedData ? JSON.parse(storedData) : null;
-
+  
   const toggleNotifications = () => {
     return !showNotifications;
   };

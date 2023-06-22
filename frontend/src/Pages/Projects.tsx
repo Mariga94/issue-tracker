@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Projects.css";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ interface ProjectName {
 }
 
 const Projects: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   const [showForm, setShowForm] = useState<boolean>(false);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,18 +39,22 @@ const Projects: React.FC = () => {
   });
   const navigateToProject = useNavigate();
   const [projects, setProjects] = useState<ProjectData[]>([]);
-  console.log(projects)
-  const [filteredProjects, setFilteredProjects] = useState(projects);
+  console.log(projects);
+  // const [filteredProjects, setFilteredProjects] = useState(projects);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    const filteredProjects = value
-      ? projects.filter((project: any) =>
-          project.title.toLowerCase().includes(value)
-        )
-      : projects;
-    setFilteredProjects(filteredProjects);
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setSearchTerm(value);
+  //   const filteredProjects = value
+  //     ? projects.filter((project: any) =>
+  //         project.title.toLowerCase().includes(value)
+  //       )
+  //     : projects;
+  //   setFilteredProjects(filteredProjects);
+  // };
+
+  const handleSearch = () => {
+    undefined;
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,29 +190,33 @@ const Projects: React.FC = () => {
             </p>
           )}
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Project Lead</th>
-              <th>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map((project) => {
-              return (
-                <tr
-                  key={project._id}
-                  onClick={() => handleNavigateToSingleProject(project._id)}
-                >
-                  <td>{project.name}</td>
-                  <td>{project.user.fullName}</td>
-                  <td>{formatDateString(project.createdAt).date}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {!isLoading ? (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Project Lead</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.map((project) => {
+                return (
+                  <tr
+                    key={project._id}
+                    onClick={() => handleNavigateToSingleProject(project._id)}
+                  >
+                    <td>{project.name}</td>
+                    <td>{project.user.fullName}</td>
+                    <td>{formatDateString(project.createdAt).date}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          "Loading...."
+        )}
       </div>
     </div>
   );

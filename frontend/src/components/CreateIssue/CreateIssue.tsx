@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React from 'react';
 
 const CreateIssue:React.FC = () => {
     return <div className="issue-form">

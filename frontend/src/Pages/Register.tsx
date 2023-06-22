@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./Register.css";
 import { useNavigate, Link } from "react-router-dom";
 import newRequest from "../config/newRequest";
-import { AxiosError } from "axios";
 
 interface RegisterFormState {
   fullName: string;
@@ -47,8 +46,8 @@ const Register: React.FC = () => {
       setTimeout(() => {
         navigate("/login");
       }, 3000);
-    } catch (error: unknown) {
-      setError((error as any)?.response?.data);
+    } catch (error) {
+      setError(error as string);
       setIsLoading(false);
     }
     setIsLoading(false);

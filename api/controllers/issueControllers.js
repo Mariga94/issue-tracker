@@ -62,13 +62,13 @@ export const assignIssueToAssignee = async (req, res) => {
 // change an issue status
 export const changeIssueStatus = async (req, res) => {
   try {
-    const projectId = req.params.projectId;
-    const issueId = req.params.issueId;
+    const issueId = req.params.id;
     const status = req.body.status;
-    const issue = await User.changeIssueStatus(issueId, status);
-    res.send(issue).status(200);
+
+    await User.changeIssueStatus(issueId, status);
+    res.status(200).send("Status updated");
   } catch (err) {
-    res.send(err).status(500);
+    res.status(500).send("Something went wrong");
   }
 };
 // change issue priority
@@ -86,7 +86,6 @@ export const changeIssuePriority = async (req, res) => {
 export const getOneIssue = async (req, res) => {
   try {
     const issue = await User.getIssue(req.params.id);
-    console.log('Get one issue')
     res.status(200).send(issue);
   } catch (err) {
     console.error(err);

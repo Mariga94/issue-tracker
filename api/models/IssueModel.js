@@ -65,8 +65,8 @@ const issueSchema = new Schema(
       required: false
     },
     creator: {
-      type: String,
-      required: false
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
     team: {
       type: [

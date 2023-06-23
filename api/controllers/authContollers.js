@@ -54,8 +54,8 @@ export const register = async (req, res) => {
       subject: "Welcome",
       html: mail,
     };
-    
-    transporter.sendMail(message)
+
+    transporter.sendMail(message);
 
     res.status(201).send("User successfully created.");
   } catch (error) {
@@ -92,7 +92,11 @@ export const login = async (req, res) => {
           secure: true,
         })
         .status(200)
-        .send({ email: user._doc.email, _id: user._doc._id });
+        .send({
+          email: user._doc.email,
+          _id: user._doc._id,
+          fullName: user._doc.fullName,
+        });
     }
   } catch (err) {
     res.status(500).send("Something is wrong");

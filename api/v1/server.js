@@ -12,7 +12,7 @@ import v1TeamRouter from "./routes/teamRoutes.js";
 import v1TeamInvitationRouter from "./routes/teamInvitationRoutes.js";
 import v1Message from "./routes/messageRoutes.js";
 import { hostname } from "os";
-import os from "os"
+import os from "os";
 
 const app = express();
 dotenv.config();
@@ -22,7 +22,7 @@ const IPAddress = getIPAddress();
 const connectDatabase = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://joseph4muriuki:${process.env.MONGO_PWD}@cluster0.xsp2hkb.mongodb.net/?retryWrites=true&w=majority`,
+      `mongodb+srv://joseph4muriuki:${process.env.MONGO_PWD}@cluster0.xsp2hkb.mongodb.net/?retryWrites=true&w=majority&dbname=bugtracker_db`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -34,7 +34,10 @@ const connectDatabase = async () => {
   }
 };
 
-const allowedOrigins = ['https://issue-tracker-red.vercel.app/', "http://127.0.0.1:5173"]
+const allowedOrigins = [
+  "https://issue-tracker-red.vercel.app/",
+  "http://127.0.0.1:5173",
+];
 
 const corsOptions = {
   origin: allowedOrigins,

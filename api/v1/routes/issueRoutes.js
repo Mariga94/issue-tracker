@@ -36,4 +36,6 @@ router.post(
   authUser,
   changeIssuePriority
 );
+
+router.put("/:id", authUser, changeIssueStatus);
 export default router;

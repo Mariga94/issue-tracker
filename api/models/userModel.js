@@ -158,11 +158,8 @@ userSchema.statics.getIssue = async function (issueId) {
   try {
     const issue = await Issue.findById(issueId)
       .populate({ path: "assignedTo", select: "_id fullName email" })
+      .populate({ path: "creator", select: "_id fullName email" })
       .populate("team")
-      .populate({
-        path: "creator",
-        select: "fullName _id",
-      })
       .populate({
         path: "user",
         select: "_id fullName email",
@@ -181,7 +178,7 @@ userSchema.statics.getAllIssues = async function () {
   try {
     const issues = await Issue.find()
       .select(
-        "project summary status issuType description team priority dueDate assignedTo createdAt updatedAt"
+        "project summary status issueType description team priority dueDate assignedTo createdAt updatedAt reporter creator"
       )
       .populate("assignedTo", "fullName");
     if (!issues) {
@@ -262,14 +259,17 @@ userSchema.statics.assignIssue = async function (
  * @throws {Error} - if issue could not be found or updated
  */
 userSchema.statics.changeIssueStatus = async function (issueId, status) {
-  const issue = await Issue.findById(issueId);
+  try {
+  const issue = await Issue.findByIdAndUpdate(issueId, { status: status });
   if (!issue) {
     throw new Error("Could not find issue");
   }
-  issue.status = status;
   await issue.save();
   console.log("Issue status updated successfully");
   return issue;
+} catch (error) {
+  throw new Error("Could update issue status")
+}
 };
 
 /**

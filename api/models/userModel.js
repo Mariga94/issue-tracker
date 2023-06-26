@@ -100,7 +100,10 @@ userSchema.statics.getProject = async function (projectId) {
 userSchema.statics.getAllProjects = async function () {
   const projects = await Project.find().select(
     "name key team type user issues createdAt updatedAt"
-  );
+  ).populate({
+    path:'user',
+    select:'-password'
+  })
 
   if (!projects.length === 0) {
     throw Error("No Available projects.");

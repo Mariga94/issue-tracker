@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Workspace from "./WorkSpaceModel.js";
 const { Schema } = mongoose;
 /**
  * @typedef {Object} Project
@@ -27,13 +28,21 @@ const projectSchema = new Schema(
       enum: ["company", "personal", "School"],
       required: false,
     },
+    workspace: {
+      type: Schema.Types.ObjectId,
+      ref: "Workspace",
+      required: true,
+    },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     issues: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
   },
+
   {
     timestamps: true,
   }
 );
+
+
 
 const Project = mongoose.model("Project", projectSchema);
 export default Project;

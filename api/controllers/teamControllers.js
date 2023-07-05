@@ -36,3 +36,14 @@ export const getTeam = async (req, res) => {
     res.status(500).send("Something went wrong!");
   }
 };
+
+// export const AddTeamMember =  async (req, res) => {
+//   try {
+//     const {id, email} = req.body;
+//     console.log(req.body)
+//     // const newMember = await Team.AddTeamMember(id, email);
+//     res.status(201).send(newMember)
+//   } catch (error) {
+//     res.status(500).send("Something is wrong");
+//   }
+// }

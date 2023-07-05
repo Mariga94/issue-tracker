@@ -81,13 +81,17 @@ teamSchema.statics.getAllTeams = async function () {
 };
 
 // Add a team member
-teamSchema.statics.addTeamMember = async function (teamId, memberId) {
+teamSchema.statics.addTeamMember = async function (teamId, email) {
   try {
+    const user = User.find({email});
+    if (!user) {
+      throw new Error('User doesn\'t exist')
+    }
     const team = await Team.findByIdAndUpdate(
       teamId,
       {
         $push: {
-          members: memberId,
+          members: user._id,
         },
       },
       { new: true }

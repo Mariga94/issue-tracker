@@ -8,9 +8,13 @@ const messageSchema = new Schema(
       ref: "User",
       required: true,
     },
-    team: {
+    receiver: {
       type: Schema.Types.ObjectId,
-      ref: "Team",
+      ref: "User",
+    },
+    workspace: {
+      type: Schema.Types.ObjectId,
+      ref: "Workspace",
       required: true,
     },
     issue: {
@@ -34,17 +38,17 @@ const messageSchema = new Schema(
 messageSchema.statics.createMessage = async function (
   userId,
   issueId,
-  teamId,
+  workspaceId,
   content
 ) {
   try {
     const message = new this({
       sender: userId,
-      team: teamId,
       issue: issueId,
+      workspace: workspaceId,
       content: content,
     });
-    console.log('This is a new message',message)
+    console.log("This is a new message", message);
     await message.save();
     return message;
   } catch (error) {

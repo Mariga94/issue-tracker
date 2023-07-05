@@ -11,6 +11,7 @@ import v1IssueRouter from "./routes/issueRoutes.js";
 import v1TeamRouter from "./routes/teamRoutes.js";
 import v1TeamInvitationRouter from "./routes/teamInvitationRoutes.js";
 import v1Message from "./routes/messageRoutes.js";
+import v1Workspace from "./routes/workspaceRoutes.js"
 import { hostname } from "os";
 import os from "os";
 
@@ -37,6 +38,7 @@ const connectDatabase = async () => {
 const allowedOrigins = [
   "https://issue-tracker-red.vercel.app/",
   "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
 ];
 
 const corsOptions = {
@@ -57,6 +59,7 @@ app.use("/api/v1/issues", v1IssueRouter);
 app.use("/api/v1/teams", v1TeamRouter);
 app.use("/api/v1/teamInvitation", v1TeamInvitationRouter);
 app.use("/api/v1/messages", v1Message);
+app.use("/api/v1/workspaces", v1Workspace)
 
 app.listen(PORT, hostname, IPAddress, () => {
   connectDatabase();

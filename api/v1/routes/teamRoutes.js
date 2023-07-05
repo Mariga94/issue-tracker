@@ -14,4 +14,5 @@ router.get("/:id", authUser, getTeam);
 // Create one team
 router.post("/", authUser, createTeam);
 
+// router.post("/:id". authUser, AddTeamMember)
 export default router;

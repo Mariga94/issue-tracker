@@ -49,11 +49,18 @@ const userSchema = new Schema(
       required: false,
     },
     projects: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Project" }],
+      type: [{ type: Schema.Types.ObjectId, ref: "Project", unique: true }],
     },
     issues: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
+      type: [{ type: Schema.Types.ObjectId, ref: "Issue", unique: true }],
     },
+    workspace: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Workspace",
+        unique: true,
+      },
+    ],
     teams: {
       type: [
         {
@@ -98,12 +105,12 @@ userSchema.statics.getProject = async function (projectId) {
 };
 
 userSchema.statics.getAllProjects = async function () {
-  const projects = await Project.find().select(
-    "name key team type user issues createdAt updatedAt"
-  ).populate({
-    path:'user',
-    select:'-password'
-  })
+  const projects = await Project.find()
+    .select("name key team type user issues createdAt updatedAt")
+    .populate({
+      path: "user",
+      select: "fullName",
+    });
 
   if (!projects.length === 0) {
     throw Error("No Available projects.");
@@ -263,16 +270,16 @@ userSchema.statics.assignIssue = async function (
  */
 userSchema.statics.changeIssueStatus = async function (issueId, status) {
   try {
-  const issue = await Issue.findByIdAndUpdate(issueId, { status: status });
-  if (!issue) {
-    throw new Error("Could not find issue");
+    const issue = await Issue.findByIdAndUpdate(issueId, { status: status });
+    if (!issue) {
+      throw new Error("Could not find issue");
+    }
+    await issue.save();
+    console.log("Issue status updated successfully");
+    return issue;
+  } catch (error) {
+    throw new Error("Could update issue status");
   }
-  await issue.save();
-  console.log("Issue status updated successfully");
-  return issue;
-} catch (error) {
-  throw new Error("Could update issue status")
-}
 };
 
 /**

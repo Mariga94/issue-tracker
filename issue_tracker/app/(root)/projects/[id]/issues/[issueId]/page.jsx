@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import Example from "@/components/SelectMenus";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 

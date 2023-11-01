@@ -3,7 +3,8 @@ import "../globals.css";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { useState } from "react";
-
+import isAuthenticated from "@/utils/Auth";
+import { redirect } from "next/navigation";
 export default function RootLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [displayIconsOnly, setDisplayIconsOnly] = useState(false);
@@ -13,25 +14,30 @@ export default function RootLayout({ children }) {
   const toggleDisplayIconsOnly = () => {
     setDisplayIconsOnly(!displayIconsOnly);
   };
-  return (
-    <html lang="en">
-      <body className="flex">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          toggleSidebar={toggleSidebar}
-          displayIconsOnly={displayIconsOnly}
-        />
-        <main className="flex flex-col w-full">
-          <Navbar
+
+  if (isAuthenticated) {
+    return (
+      <html lang="en">
+        <body className="flex">
+          <Sidebar
+            isOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}
-            toggleDisplayIconsOnly={toggleDisplayIconsOnly}
             displayIconsOnly={displayIconsOnly}
           />
-          <div className="px-8 py-10">{children}</div>
-        </main>
-      </body>
-    </html>
-  );
+          <main className="flex flex-col w-full">
+            <Navbar
+              toggleSidebar={toggleSidebar}
+              toggleDisplayIconsOnly={toggleDisplayIconsOnly}
+              displayIconsOnly={displayIconsOnly}
+            />
+            <div className="px-8 py-10">{children}</div>
+          </main>
+        </body>
+      </html>
+    );
+  } else {
+    redirect("/sign-in");
+  }
 }
 
 /**

@@ -5,18 +5,6 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  daisyui: {
-    themes: ["pastel"],
-  },
-  theme: {
-    extend: {
-      colors: {
-        pastel: {
-          primary: "#abcdef",
-          secondary: "#f0e0d0",
-        },
-      },
-    },
-  },
+  theme: {},
   plugins: [require("daisyui")],
 };
